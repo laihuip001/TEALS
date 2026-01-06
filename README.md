@@ -47,6 +47,7 @@ python demo.py
 ```
 
 デモでは以下を実演します：
+
 1. ログの追加
 2. 正常状態での検証 → 「検証完了」
 3. データの直接改ざん
@@ -100,3 +101,53 @@ current_hash = SHA256(timestamp + user_id + action_type + target_table
 
 - 最初のレコードの `previous_hash` は `"0" × 64文字`
 - 各レコードは直前のレコードのハッシュ値を参照し、チェーンを形成
+
+---
+
+# English
+
+## Overview
+
+**TEALS** (Tamper-Evident Audit Log System) is a Python library that records data changes and detects tampering using blockchain technology (hash chains).
+
+### Design Philosophy
+
+This system enforces the **"correction journal entry principle"** from accounting:
+
+- Never erase a recorded number
+- Corrections must use reversal entry + correct entry
+- All history must be traceable
+
+### Key Features
+
+| Feature | Description |
+|:--|:--|
+| **Hash Chain** | Each record links to the previous one via SHA-256 hash |
+| **Tamper Detection** | Any modification breaks the chain, enabling instant detection |
+| **Audit Trail** | Complete history of INSERT/UPDATE/DELETE operations |
+
+### Technical Stack
+
+- Python 3.11+
+- SQLAlchemy (ORM)
+- SQLite (Database)
+- hashlib (SHA-256)
+
+### Quick Start
+
+```bash
+pip install sqlalchemy
+python demo.py
+```
+
+### Use Case
+
+Ideal for:
+
+- Financial systems requiring audit trails
+- Compliance-critical applications
+- Any system where data integrity is essential
+
+---
+
+*Built with 🔐 integrity in mind*
