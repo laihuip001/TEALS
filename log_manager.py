@@ -6,7 +6,7 @@ TEALS - ログ追加ロジック
 import hashlib
 import json
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional
 
 from models import AuditLog
 
@@ -22,25 +22,14 @@ def calculate_hash(
     target_table: str,
     before_data: Optional[str],
     after_data: Optional[str],
-    previous_hash: str
+    previous_hash: str,
+    ai_model: Optional[str] = None
 ) -> str:
     """
     監査ログのハッシュ値を計算する
     
     SHA256(timestamp + user_id + action_type + target_table + 
-           before_data + after_data + previous_hash)
-    
-    Args:
-        timestamp: 記録日時
-        user_id: 操作者ID
-        action_type: 操作種別
-        target_table: 対象テーブル名
-        before_data: 変更前データ（JSON文字列）
-        after_data: 変更後データ（JSON文字列）
-        previous_hash: 前のレコードのハッシュ値
-        
-    Returns:
-        64文字のSHA-256ハッシュ値
+           [ai_model] + before_data + after_data + previous_hash)
     """
     # タイムスタンプをISO形式の文字列に変換
     timestamp_str = timestamp.isoformat()
@@ -48,6 +37,7 @@ def calculate_hash(
     # None値を空文字列に変換
     before_str = before_data if before_data else ""
     after_str = after_data if after_data else ""
+    ai_model_str = ai_model if ai_model else ""
     
     # 連結してハッシュ計算
     data = (
@@ -55,6 +45,7 @@ def calculate_hash(
         user_id +
         action_type +
         target_table +
+        ai_model_str +
         before_str +
         after_str +
         previous_hash
@@ -70,7 +61,8 @@ def add_log(
     target_table: str,
     before_data: Optional[dict] = None,
     after_data: Optional[dict] = None,
-    timestamp: Optional[datetime] = None
+    timestamp: Optional[datetime] = None,
+    ai_model: Optional[str] = None
 ) -> AuditLog:
     """
     監査ログを追加する
@@ -85,6 +77,7 @@ def add_log(
         before_data: 変更前データ（dict）
         after_data: 変更後データ（dict）
         timestamp: 記録日時（省略時は現在時刻）
+        ai_model: AIモデルID（例: "Opus", "Gemini"）
         
     Returns:
         作成されたAuditLogオブジェクト
@@ -108,7 +101,8 @@ def add_log(
         target_table=target_table,
         before_data=before_json,
         after_data=after_json,
-        previous_hash=previous_hash
+        previous_hash=previous_hash,
+        ai_model=ai_model
     )
     
     # レコードを作成
@@ -117,6 +111,7 @@ def add_log(
         user_id=user_id,
         action_type=action_type,
         target_table=target_table,
+        ai_model=ai_model,
         before_data=before_json,
         after_data=after_json,
         previous_hash=previous_hash,

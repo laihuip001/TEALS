@@ -63,7 +63,8 @@ def verify_all(session) -> VerificationResult:
             target_table=log.target_table,
             before_data=log.before_data,
             after_data=log.after_data,
-            previous_hash=log.previous_hash
+            previous_hash=log.previous_hash,
+            ai_model=log.ai_model
         )
         
         if log.current_hash != recalculated_hash:
@@ -102,7 +103,8 @@ def verify_single(session, log_id: int) -> Tuple[bool, str]:
         target_table=log.target_table,
         before_data=log.before_data,
         after_data=log.after_data,
-        previous_hash=log.previous_hash
+        previous_hash=log.previous_hash,
+        ai_model=log.ai_model
     )
     
     if log.current_hash == recalculated_hash:

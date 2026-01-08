@@ -22,6 +22,7 @@ class AuditLog(Base):
     user_id = Column(String(100), nullable=False)
     action_type = Column(String(10), nullable=False)  # INSERT, UPDATE, DELETE
     target_table = Column(String(100), nullable=False)
+    ai_model = Column(String(50), nullable=True)      # AI Model ID (e.g. "Opus", "Gemini")
     before_data = Column(Text, nullable=True)  # JSON形式
     after_data = Column(Text, nullable=True)   # JSON形式
     previous_hash = Column(String(64), nullable=False)
